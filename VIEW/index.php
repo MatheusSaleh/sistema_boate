@@ -1,5 +1,5 @@
 <?php
-include('conexao.php');
+include('../MODEL/conexao.php');
 
 if(isset($_POST['email']) || isset($_POST['senha'])){
     if(strlen($_POST['email']) == 0){
@@ -8,12 +8,11 @@ if(isset($_POST['email']) || isset($_POST['senha'])){
         echo "Preencha sua senha";
     } else{
         /** @noinspection PhpUndefinedVariableInspection */
-        $email = $mysqli->real_escape_string($_POST['email']);
-        $senha = $mysqli->real_escape_string($_POST['senha']);
+        $email = $conexao->real_escape_string($_POST['email']);
+        $senha = $conexao->real_escape_string($_POST['senha']);
 
         $sql_code = "SELECT * FROM usuarios WHERE email = '$email' AND senha = '$senha'";
-        $sql_query = $mysqli->query($sql_code) or die("Falha na execucao do codigo SQL: ". $mysqli->error);
-
+        $sql_query = $conexao->query($sql_code) or die("Falha na execucao do codigo SQL: ". $conexao->error);
         $quantidade = $sql_query->num_rows;
 
         if($quantidade == 1){
