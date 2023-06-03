@@ -2,23 +2,20 @@
 require_once "../MODEL/conexao.php";
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    
     $nome = $_POST['nome'];
-    $idade = $_POST['idade'];
-    $cargo = $_POST['cargo'];
+    $tipo = $_POST['tipo'];
+    $preco = $_POST['preco'];
 
-    $sql = "INSERT INTO funcionarios (nome,idade,cargo) VALUES ('$nome','$idade','$cargo')";
+    $sql = "INSERT INTO bebidas (nome, tipo, preco) VALUES ('$nome', '$tipo', '$preco')";
 
-    if (mysqli_query($conexao, $sql)) {
-        echo "Funcionário adicionado com sucesso!";
-        header("Location: funcionarios.php");
-    } else {
-       
-        echo "Erro ao adicionar funcionário: " . mysqli_error($conexao);
+    if(mysqli_query($conexao, $sql)){
+        echo "Bebida adicionada com sucesso";
+        header("Location: bebibas.php");
+    } else{
+        echo "Erro ao adicionar bebida";
     }
 
     mysqli_close($conexao);
-
 }
 ?>
 
@@ -31,10 +28,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <title>Adicionar Funcionarios</title>
+    <title>Adicionar Bebidas</title>
 </head>
 <body>
-    <h1 class="text-center mt-2">Adicionar Funcionarios</h1>
+    <h1 class="text-center mt-2">Adicionar Bebidas</h1>
     <div class="container">
         <form method="POST" action="">
             <div class="mb-3">
@@ -42,14 +39,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                 <input type="text" class="form-control" id="nome" name="nome" required>
             </div>
             <div class="mb-3">
-                <label for="idade" class="form-label">Idade</label>
-                <input type="number" class="form-control" id="idade" name="idade" required>
+                <label for="tipo" class="form-label">Tipo</label>
+                <input type="text" class="form-control" id="tipo" name="tipo" required>
             </div>
             <div class="mb-3">
-                <label for="cargo" class="form-label">Cargo</label>
-                <input type="text" class="form-control" id="cargo" name="cargo" required>
+                <label for="preco" class="form-label">Preco</label>
+                <input type="number" class="form-control" id="preco" name="preco" required>
             </div>
-            <a class="btn btn-danger" href="funcionarios.php"><i class="bi bi-arrow-left"></i> Voltar</a>
+            <a class="btn btn-danger" href="bebibas.php"><i class="bi bi-arrow-left"></i> Voltar</a>
             <button type="submit" class="btn btn-success"><i class="bi bi-check-lg"></i> Confirmar</button>
         </form>
     </div>
