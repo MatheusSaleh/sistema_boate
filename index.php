@@ -7,6 +7,7 @@ if(isset($_POST['email']) || isset($_POST['senha'])){
     } else if(strlen($_POST['senha']) == 0){
         echo "Preencha sua senha";
     } else{
+        /** @noinspection PhpUndefinedVariableInspection */
         $email = $mysqli->real_escape_string($_POST['email']);
         $senha = $mysqli->real_escape_string($_POST['senha']);
 
@@ -50,9 +51,8 @@ if(isset($_POST['email']) || isset($_POST['senha'])){
 </head>
 
 <body class="bg-success">
-    <div class="text-center">
-        <h1 class="text-white">Login</h1>
-    </div>
+
+    <div class="p-3 mb-2 bg-dark text-white mb-3">SISTEMA ASSIS NIGHT CLUB</div>
     <div class="container-fluid w-50 p-4 rounded bg-white bg-opacity-75">
         <form action="" method="POST">
             <p>
