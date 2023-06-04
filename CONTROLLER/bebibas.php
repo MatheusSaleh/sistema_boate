@@ -1,29 +1,46 @@
-<?php 
-    require_once "../MODEL/conexao.php";
+<?php
+require_once "../MODEL/conexao.php";
 
-    if(!$conexao){
-        die("Falha na conexao com o banco de dados" . mysqli_connect_error());
+if (!$conexao) {
+    die("Falha na conexao com o banco de dados" . mysqli_connect_error());
+}
+
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+
+    $sql = "DELETE FROM bebidas WHERE id = '$id'";
+
+    if (mysqli_query($conexao, $sql)) {
+        header("Location: bebibas.php");
+        exit();
+    } else {
+        echo "Erro ao excluir bebida";
     }
+}
 
-    if(isset($_GET['id'])){
-        $id = $_GET['id'];
+if (isset($_POST['editar'])) {
+    $id = $_POST['id'];
+    $nome = $_POST['nome'];
+    $tipo = $_POST['tipo'];
+    $preco = $_POST['preco'];
 
-        $sql = "DELETE FROM bebidas WHERE id = '$id'";
+    $sql = "UPDATE bebidas SET nome = '$nome', tipo = '$tipo', preco = '$preco' WHERE id = '$id'";
 
-        if (mysqli_query($conexao, $sql)){
-            header("Location: bebibas.php");
-            exit();
-        }else{
-            echo "Erro ao excluir bebida";
-        }
+    if (mysqli_query($conexao, $sql)) {
+        header("Location: bebibas.php");
+        exit();
+    } else {
+        echo "Erro ao atualizar bebida" . mysqli_error($conexao);
     }
+}
 
-    $sql = "SELECT * FROM bebidas";
-    $resultado = mysqli_query($conexao, $sql);
+$sql = "SELECT * FROM bebidas";
+$resultado = mysqli_query($conexao, $sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -33,8 +50,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <title>Bebibas</title>
 </head>
+
 <body>
-<div class="p-3 mb-2 bg-dark text-white mb-3">
+    <div class="p-3 mb-2 bg-dark text-white mb-3">
         SISTEMA ASSIS NIGHT CLUB
         <div class="d-flex flex-row-reverse">
             <div class="p-2">
@@ -55,22 +73,55 @@
                 <th>Ações</th>
             </tr>
             <?php
-            if(mysqli_num_rows($resultado) > 0){
-                while($row = mysqli_fetch_assoc($resultado)){
+            if (mysqli_num_rows($resultado) > 0) {
+                while ($row = mysqli_fetch_assoc($resultado)) {
                     echo "<tr class = 'text-center'>";
                     echo "<td>" . $row["id"] . "</td>";
                     echo "<td>" . $row["nome"] . "</td>";
                     echo "<td>" . $row["tipo"] . "</td>";
                     echo "<td>" . $row["preco"] . "</td>";
                     echo "<td>
-                    <button class='btn btn-primary'><i class='bi bi-pencil'></i></button>
+                    <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#editarBebidaModal" . $row['id'] . "'><i class='bi bi-pencil'></i></button>
                     <a href='?id=" . $row['id'] . "' class='btn btn-danger'><i class='bi bi-trash'></i></a>
                     </td>";
                     echo "</tr>";
+
+                    echo "<div class='modal fade' id='editarBebidaModal" . $row['id'] . "' tabindex='-1' aria-labelledby='editarBebibaModalLabel" . $row['id'] . "' aria-hidden='true'>
+                            <div class='modal-dialog'>
+                                <div class='modal-content'>
+                                    <div class='modal-header'>
+                                        <h5 class='modal-title' id='editarBebidaModalLabel" . $row['id'] . "'>Editar Bebida</h5>
+                                        <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Fechar'></button>
+                                    </div>
+                                    <div class='modal-body'>
+                                        <form method='post'>
+                                            <input type='hidden' name='id' value='" . $row['id'] . "'>
+                                            <div class='mb-3'>
+                                                <label for='nome" . $row['id'] . "' class='form-label'>Nome</label>
+                                                <input type='text' class='form-control' id='nome" . $row['id'] . "' name='nome' value='" . $row['nome'] . "'>
+                                            </div>
+                                            <div class='mb-3'>
+                                                <label for='tipo" . $row['id'] . "' class='form-label'>Tipo</label>
+                                                <input type='text' class='form-control' id='tipo" . $row['id'] . "' name='tipo' value='" . $row['tipo'] . "'>
+                                            </div>
+                                            <div class='mb-3'>
+                                                <label for='preco" . $row['id'] . "' class='form-label'>Preco</label>
+                                                <input type='text' class='form-control' id='preco" . $row['id'] . "' name='preco' value='" . $row['preco'] . "'>
+                                            </div>
+                                            <button type='submit' name='editar' class='btn btn-success'><i class='bi bi-check-lg'></i> Confirmar</button>
+                                        </form>
+                                    </div>
+                                    <div class='modal-footer'>
+                                        <button type='button' class='btn btn-danger' data-bs-dismiss='modal'><i class='bi bi-arrow-left'></i></i> Voltar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>";
                 }
             }
             ?>
         </table>
     </div>
 </body>
+
 </html>
