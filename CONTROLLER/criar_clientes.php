@@ -1,10 +1,20 @@
 <?php 
 require_once "../MODEL/conexao.php";
 
+function validarEmail($email){
+    $regex = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
+    return preg_match($regex, $email);
+}
+
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $nome = $_POST['nome'];
     $email = $_POST['email'];
     $telefone = $_POST['telefone'];
+
+    if(!validarEmail($email)){
+        echo "Email invalido";
+        exit();
+    }
 
     $sql = "INSERT INTO clientes (nome, email, telefone) VALUES ('$nome', '$email', '$telefone')";
 
