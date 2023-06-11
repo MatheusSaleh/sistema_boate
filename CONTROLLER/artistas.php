@@ -103,6 +103,7 @@ $resultado = mysqli_query($conexao, $sql);
                 echo "<td>
                 <button class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#editarArtistaModal" . $row['id'] . "'><i class='bi bi-pencil'></i></button>
                 <a href='?id=" . $row['id'] . "' class='btn btn-danger'><i class='bi bi-trash'></i></a>
+                <a href='biografia.php?id=" . $row['id'] . "' class='btn btn-warning text-white'><i class='bi bi-book'></i></a>
                 </td>";
                 echo "</tr>";
 
