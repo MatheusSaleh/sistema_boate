@@ -7,14 +7,14 @@
 
 ## 0. Ponto de partida: o que existe hoje
 
-| Módulo | O que faz | Observações relevantes |
-|---|---|---|
-| Login (`VIEW/index.php`) | E-mail + senha contra a tabela `usuarios` | Senha comparada em texto puro |
-| Painel (`VIEW/painel.php`) | 4 cartões de navegação | Única página protegida por `UTIL/protect.php` |
-| Funcionários | CRUD nome / idade / cargo | Separado de `usuarios`: funcionário não faz login e não tem permissão |
-| Bebidas (`bebibas.php`) | CRUD nome / tipo / preço | Preço em campo de texto e `type="number"` sem casas decimais; sem estoque |
-| Clientes | CRUD nome / e-mail / telefone | Sem documento, sem data de nascimento |
-| Artistas + biografia | CRUD com upload de foto e redes sociais | A listagem **apaga automaticamente** artistas cuja data do show já passou |
+| Módulo                     | O que faz                                 | Observações relevantes                                                    |
+| -------------------------- | ----------------------------------------- | ------------------------------------------------------------------------- |
+| Login (`VIEW/index.php`)   | E-mail + senha contra a tabela `usuarios` | Senha comparada em texto puro                                             |
+| Painel (`VIEW/painel.php`) | 4 cartões de navegação                    | Única página protegida por `UTIL/protect.php`                             |
+| Funcionários               | CRUD nome / idade / cargo                 | Separado de `usuarios`: funcionário não faz login e não tem permissão     |
+| Bebidas (`bebibas.php`)    | CRUD nome / tipo / preço                  | Preço em campo de texto e `type="number"` sem casas decimais; sem estoque |
+| Clientes                   | CRUD nome / e-mail / telefone             | Sem documento, sem data de nascimento                                     |
+| Artistas + biografia       | CRUD com upload de foto e redes sociais   | A listagem **apaga automaticamente** artistas cuja data do show já passou |
 
 ### Problemas que bloqueiam qualquer evolução
 
@@ -36,7 +36,7 @@ Estes itens não são "melhorias": são pré-requisitos. Qualquer módulo financ
 
 Escala de esforço (1 dev, conhecendo o projeto): **P** = até 3 dias · **M** = 1 a 2 semanas · **G** = 3+ semanas.
 
-### F0 — Fundação técnica e segurança  *(obrigatória, vem primeiro)*
+### F0 — Fundação técnica e segurança _(obrigatória, vem primeiro)_
 
 - **Problema:** os itens 1–9 acima.
 - **Valor para o usuário:** dados de clientes e valores financeiros deixam de estar expostos; o dono pode confiar no que o sistema mostra.
@@ -142,13 +142,13 @@ Escala de esforço (1 dev, conhecendo o projeto): **P** = até 3 dias · **M** =
 
 ### Ordem sugerida
 
-| Fase | Entregas | Resultado |
-|---|---|---|
-| 1 | F0, F1, F2 | Sistema seguro e com responsáveis por cada ação |
-| 2 | 1, 5, 9 | Cadastros corretos: eventos, produtos, clientes |
-| 3 | 3, 2, 4 | Porta funcionando: lista, ingresso, check-in |
-| 4 | 6, 7, 8 | Bar e caixa funcionando com estoque consistente |
-| 5 | 10 | Gestão por indicadores |
+| Fase | Entregas   | Resultado                                       |
+| ---- | ---------- | ----------------------------------------------- |
+| 1    | F0, F1, F2 | Sistema seguro e com responsáveis por cada ação |
+| 2    | 1, 5, 9    | Cadastros corretos: eventos, produtos, clientes |
+| 3    | 3, 2, 4    | Porta funcionando: lista, ingresso, check-in    |
+| 4    | 6, 7, 8    | Bar e caixa funcionando com estoque consistente |
+| 5    | 10         | Gestão por indicadores                          |
 
 ---
 
@@ -157,6 +157,7 @@ Escala de esforço (1 dev, conhecendo o projeto): **P** = até 3 dias · **M** =
 Regras que precisam ser garantidas **no banco e no servidor**, não só na interface. Todas exigem InnoDB e transações.
 
 **Check-in duplicado**
+
 - Validar e marcar numa única operação atômica:
   `UPDATE ingressos SET utilizado_em = NOW(), checkin_por = ? WHERE token = ? AND evento_id = ? AND status = 'emitido'`
   — se `affected_rows = 0`, o ingresso já foi usado, é inválido ou é de outro evento. Isso elimina a corrida entre dois porteiros lendo o mesmo QR ao mesmo tempo.
@@ -164,12 +165,14 @@ Regras que precisam ser garantidas **no banco e no servidor**, não só na inter
 - Check-in manual (sem QR) exige permissão e fica auditado.
 
 **Limite de capacidade**
+
 - Venda de ingresso/lote e check-in devem travar o contador do evento (`SELECT … FOR UPDATE` na linha do evento ou do lote) antes de incrementar, dentro de uma transação.
 - Soma de todos os lotes + listas não pode ultrapassar a capacidade do evento (validar na criação do lote).
 - Reservas pendentes ocupam vaga até expirar; um job ou a própria consulta libera as expiradas.
 - Definir política para lotação atingida: bloquear entrada ou permitir override de gerente (auditado).
 
 **Consistência de estoque**
+
 - Toda alteração de saldo gera uma movimentação; saldo nunca é editado diretamente.
 - Lançamento de item e baixa de estoque na **mesma transação**: ou os dois acontecem, ou nenhum.
 - Cancelamento de item gera movimentação de estorno (não apaga a movimentação original).
@@ -177,6 +180,7 @@ Regras que precisam ser garantidas **no banco e no servidor**, não só na inter
 - Combos baixam cada componente conforme a ficha técnica.
 
 **Cobranças duplicadas**
+
 - Cada tentativa de pagamento carrega uma **chave de idempotência** gerada na tela; reenvio com a mesma chave devolve o resultado anterior em vez de cobrar de novo.
 - `UNIQUE` em NSU (cartão) e TXID/E2E (PIX).
 - O botão de pagar é desabilitado após o primeiro clique e o servidor rejeita pagamento em comanda que não esteja `aberta`/`em_fechamento`.
@@ -184,6 +188,7 @@ Regras que precisam ser garantidas **no banco e no servidor**, não só na inter
 - Estorno é um novo registro vinculado ao original, nunca edição/exclusão do pagamento.
 
 **Outras regras importantes**
+
 - **Valores monetários** em `DECIMAL(10,2)` (ou inteiros em centavos), nunca `FLOAT` ou texto.
 - **Preço congelado** no item da comanda; alterar o cardápio não altera comandas abertas.
 - **Caixa fechado não aceita lançamentos**; cada pagamento pertence a uma sessão de caixa aberta.
@@ -223,14 +228,14 @@ Regras que precisam ser garantidas **no banco e no servidor**, não só na inter
 
 ### Principais telas por perfil
 
-| Perfil | Dispositivo principal | Telas | Foco |
-|---|---|---|---|
-| **Portaria** | Celular | Scanner de QR em tela cheia · Busca por nome/documento · Contador de lotação | Resultado do check-in ocupando a tela inteira (verde/âmbar/vermelho + ícone + texto grande + vibração). Volta sozinho ao scanner em 2 s. Mostra nome, tipo (VIP, lista, lote) e alerta de menor de idade. |
-| **Bar / Garçom** | Tablet ou celular | Abrir/buscar comanda (número ou QR) · Grade de produtos por categoria · Carrinho · Confirmar lançamento | Botões grandes com nome e preço, mais vendidos primeiro, busca por digitação. Quantidade com +/−. Confirmação mostra comanda e total antes de lançar. |
-| **Caixa** | Computador ou tablet | Buscar comanda · Resumo de consumo · Pagamento (dividir por meio/pessoa) · Abertura/fechamento/sangria | Teclado numérico na tela, atalhos de teclado no desktop, troco calculado, comprovante. Valor restante sempre visível em destaque. |
-| **Promoter** | Celular | Minhas listas · Adicionar nomes · Ver quem já entrou | Formulário curto, link compartilhável para convidados se cadastrarem. |
-| **Gerente** | Computador e celular | Painel ao vivo da noite · Eventos e lotes · Estoque e inventário · Autorizações pendentes · Relatórios | Números grandes no topo, alertas (estoque baixo, lotação perto do limite, cancelamentos acima do normal). |
-| **Admin** | Computador | Usuários e perfis · Configurações · Auditoria | Filtros por usuário/ação/período na auditoria. |
+| Perfil           | Dispositivo principal | Telas                                                                                                   | Foco                                                                                                                                                                                                      |
+| ---------------- | --------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Portaria**     | Celular               | Scanner de QR em tela cheia · Busca por nome/documento · Contador de lotação                            | Resultado do check-in ocupando a tela inteira (verde/âmbar/vermelho + ícone + texto grande + vibração). Volta sozinho ao scanner em 2 s. Mostra nome, tipo (VIP, lista, lote) e alerta de menor de idade. |
+| **Bar / Garçom** | Tablet ou celular     | Abrir/buscar comanda (número ou QR) · Grade de produtos por categoria · Carrinho · Confirmar lançamento | Botões grandes com nome e preço, mais vendidos primeiro, busca por digitação. Quantidade com +/−. Confirmação mostra comanda e total antes de lançar.                                                     |
+| **Caixa**        | Computador ou tablet  | Buscar comanda · Resumo de consumo · Pagamento (dividir por meio/pessoa) · Abertura/fechamento/sangria  | Teclado numérico na tela, atalhos de teclado no desktop, troco calculado, comprovante. Valor restante sempre visível em destaque.                                                                         |
+| **Promoter**     | Celular               | Minhas listas · Adicionar nomes · Ver quem já entrou                                                    | Formulário curto, link compartilhável para convidados se cadastrarem.                                                                                                                                     |
+| **Gerente**      | Computador e celular  | Painel ao vivo da noite · Eventos e lotes · Estoque e inventário · Autorizações pendentes · Relatórios  | Números grandes no topo, alertas (estoque baixo, lotação perto do limite, cancelamentos acima do normal).                                                                                                 |
+| **Admin**        | Computador            | Usuários e perfis · Configurações · Auditoria                                                           | Filtros por usuário/ação/período na auditoria.                                                                                                                                                            |
 
 ### Clareza
 
@@ -267,4 +272,4 @@ Regras que precisam ser garantidas **no banco e no servidor**, não só na inter
 
 ## 6. Apresentação no GitHub
 
-*(O enunciado desta seção estava incompleto no material recebido.)*
+_(O enunciado desta seção estava incompleto no material recebido.)_
