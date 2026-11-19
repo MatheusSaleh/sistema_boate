@@ -7,7 +7,7 @@ Sistema de gestão de boate (portaria, bar, caixa e cadastros) em **Laravel + Re
 
 ## Requisitos
 
-- PHP 8.3+ com as extensões `pdo_sqlite`, `mbstring`, `openssl` e `fileinfo` (no Windows/macOS, o [Laravel Herd](https://herd.laravel.com) já traz tudo)
+- PHP 8.4+ com as extensões `pdo_sqlite`, `mbstring`, `openssl` e `fileinfo` (no Windows/macOS, o [Laravel Herd](https://herd.laravel.com) já traz tudo)
 - [Composer](https://getcomposer.org) 2
 - [Node.js](https://nodejs.org) 22+ e npm
 
@@ -38,11 +38,11 @@ O fuso horário (`APP_TIMEZONE=America/Sao_Paulo`) e o idioma (`APP_LOCALE=pt_BR
 
 ## Comandos úteis
 
-| Comando | O que faz |
-|---|---|
-| `composer run dev` | Ambiente de desenvolvimento completo |
-| `php artisan test` | Roda os testes (Pest) |
-| `npm run build` | Build de produção do front-end |
-| `npm run check` | Lint e formatação do front-end (`check:fix` corrige) |
-| `npm run types:check` | Checagem de tipos TypeScript |
-| `vendor/bin/pint` | Formata o código PHP |
+| Comando               | O que faz                                            |
+| --------------------- | ---------------------------------------------------- |
+| `composer run dev`    | Ambiente de desenvolvimento completo                 |
+| `php artisan test`    | Roda os testes (Pest)                                |
+| `npm run build`       | Build de produção do front-end                       |
+| `npm run check`       | Lint e formatação do front-end (`check:fix` corrige) |
+| `npm run types:check` | Checagem de tipos TypeScript                         |
+| `vendor/bin/pint`     | Formata o código PHP                                 |
