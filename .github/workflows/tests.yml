@@ -76,3 +76,6 @@ jobs:
 
       - name: Tests (Pest)
         run: php artisan test
+
+      - name: Tests TS (Vitest)
+        run: npm test
