@@ -76,3 +76,9 @@ jobs:
 
       - name: Tests (Pest)
         run: php artisan test
+
+      - name: Tests TS (Vitest)
+        run: npm test
+        env:
+          # O Vitest carrega o vite.config.ts; o plugin do Laravel bloqueia o modo dev em CI
+          LARAVEL_BYPASS_ENV_CHECK: 1
