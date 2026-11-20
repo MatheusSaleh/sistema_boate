@@ -1,5 +1,7 @@
 # Sistema Boate
 
+[![tests](https://github.com/MatheusSaleh/sistema_boate/actions/workflows/tests.yml/badge.svg)](https://github.com/MatheusSaleh/sistema_boate/actions/workflows/tests.yml)
+
 Sistema de gestão de boate (portaria, bar, caixa e cadastros) em **Laravel + React + Inertia**, com TypeScript, Tailwind e shadcn/ui.
 
 > O sistema antigo em PHP puro está em [`legacy/`](legacy/) apenas como referência até a paridade ser atingida (issue #16).
@@ -46,3 +48,19 @@ O fuso horário (`APP_TIMEZONE=America/Sao_Paulo`) e o idioma (`APP_LOCALE=pt_BR
 | `npm run check`       | Lint e formatação do front-end (`check:fix` corrige) |
 | `npm run types:check` | Checagem de tipos TypeScript                         |
 | `vendor/bin/pint`     | Formata o código PHP                                 |
+| `composer ci:check`   | Roda localmente todas as checagens do CI             |
+
+## Qualidade de código
+
+Todo PR roda o workflow [`tests`](.github/workflows/tests.yml), que falha se qualquer etapa quebrar:
+
+| Etapa                | Ferramenta                                                 |
+| -------------------- | ---------------------------------------------------------- |
+| Lint PHP             | [Pint](https://laravel.com/docs/pint) (preset `laravel`)   |
+| Análise estática PHP | [PHPStan](https://phpstan.org) + Larastan, nível 7         |
+| Lint e formatação TS | [Vite+](https://viteplus.dev) (`vp check`: Oxlint + Oxfmt) |
+| Tipos TS             | `tsc --noEmit`                                             |
+| Build                | `npm run build`                                            |
+| Testes               | [Pest](https://pestphp.com), com SQLite em memória         |
+
+Antes de abrir um PR, rode `composer ci:check`. Para corrigir a formatação automaticamente, use `vendor/bin/pint` e `npm run check:fix`.
